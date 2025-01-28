@@ -1,8 +1,17 @@
 import os
 import cv2
 from ultralytics import YOLO
+from zebraprint.zbprint import print_label
+import logging
 
-def extract_labels(image_path, model_path, friendly_name, save_directory):
+logging.basicConfig(
+    level=logging.INFO,
+    filename='yoloextract.log',
+    filemode='a',
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+def extract_labels(image_path, model_path, friendly_name, save_directory, isPrint=False, print_path=None):
     os.makedirs(save_directory, exist_ok=True)
 
     base_name = os.path.splitext(os.path.basename(image_path))[0]
@@ -27,4 +36,10 @@ def extract_labels(image_path, model_path, friendly_name, save_directory):
         output_path = os.path.join(save_directory, output_name)
 
         cv2.imwrite(output_path, ultralytics_crop_object)
-        print(f"Object saved at: {output_path}")
+        if isPrint:
+            logging.info(f'Attempting to print {output_name}')
+            print_label(print_path, output_path)
+            print(f"Object saved at: {output_path}")
+        else:
+            logging.info(f"Object: {output_name} saved at: {output_path}")
+            print(f"Object saved at: {output_path}")
