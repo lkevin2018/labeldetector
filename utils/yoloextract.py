@@ -19,6 +19,10 @@ def extract_labels(image_path, model_path, friendly_name, save_directory):
         x1, y1, x2, y2 = box
         ultralytics_crop_object = image[int(y1):int(y2), int(x1):int(x2)]
         
+        height, width, _ = ultralytics_crop_object.shape
+        if width > height:
+            ultralytics_crop_object = cv2.rotate(ultralytics_crop_object, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        
         output_name = f"processed_{friendly_name}_label{i}.png"
         output_path = os.path.join(save_directory, output_name)
 
